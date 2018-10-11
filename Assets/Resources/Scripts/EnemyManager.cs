@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class EnemyManager : MonoBehaviour {
 
+    public int              wave_size; //Колличество врагов в очереди
     public Text             damage_text_obj;
     public List<enemyObj>   EnemyOrder = new List<enemyObj>();
     private List<int>       EnemyKilled = new List<int>();
@@ -70,7 +71,7 @@ public class EnemyManager : MonoBehaviour {
 
     private void SpawnEnemy()
     {
-        if (EnemyOrder.Count < 5)
+        if (EnemyOrder.Count < 5 && wave_size > 0)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -79,6 +80,7 @@ public class EnemyManager : MonoBehaviour {
                 {
                     EnemyOrder.Add(GetRandomEnemyByLevel(1));
                     EnemyOrder[EnemyOrder.Count - 1].Spawn(new Vector2(16f + (2f * i), 0f));
+                    wave_size -= 1;
                     break;
                 }
             }
