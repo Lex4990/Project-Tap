@@ -1,13 +1,21 @@
-п»ї//Р‘Р°Р·РѕРІРѕРµ РїРѕРІРµРґРµРЅРёРµ РІСЃРµС… РѕР±СЉРµРєС‚РѕРІ РІСЂР°РіРѕРІ Рё РёРіСЂРѕРєР°
+//Базовое поведение всех объектов врагов и игрока
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DragonBones;
+using System.Linq;
 
 public class chars_behavior : MonoBehaviour {
 
-    //РїР°СЂР°РјРµС‚СЂС‹ РїРµСЂСЃРѕРЅР°Р¶Р°
+    //параметры персонажа
+
+   
+
+
+
+
+
     public int hp = 0;
     public int attack = 0;
     public float attack_delay = 0.0f;
@@ -20,7 +28,7 @@ public class chars_behavior : MonoBehaviour {
     protected GameObject gcontroller;
     protected UnitySlot weapon_slot;
 
-    //РЎРІРѕР№СЃС‚РІР°
+    //Свойства
 
     protected void Load_DB(string DBD_path, string TAD_path, string armature_name)
     {
@@ -36,7 +44,7 @@ public class chars_behavior : MonoBehaviour {
         hp -= damage;
     }
 
-    //РђС‚Р°РєР°
+    //Атака
     virtual public void melee_attack(int damage)
     {
         int flip_value = 1;
@@ -51,14 +59,14 @@ public class chars_behavior : MonoBehaviour {
         Collider2D[] enemies_to_damage = Physics2D.OverlapCircleAll((Vector2)gameObject.transform.position + new Vector2(attack_pos_x * flip_value, attack_pos_y), attack_range);
         for (int i = 0; i < enemies_to_damage.Length; i++)
         {
-            if (enemies_to_damage[i] != gameObject.GetComponent<Collider2D>() && enemies_to_damage[i].GetComponent<chars_behavior>())//РїСЂРµРґРѕС‚РІСЂР°С‰РµРЅРёРµ РѕС‚ РЅР°РЅРµСЃРµРЅРёСЏ СѓСЂРѕРЅР° СЃР°РјРѕРјСѓ СЃРµР±Рµ
+            if (enemies_to_damage[i] != gameObject.GetComponent<Collider2D>() && enemies_to_damage[i].GetComponent<chars_behavior>())//предотвращение от нанесения урона самому себе
             {
                 enemies_to_damage[i].GetComponent<chars_behavior>().Get_Damage(damage);
             }
         }
     }
 
-    //РёР·РјРµРЅРµРЅРёРµ РѕСЂСѓР¶РёСЏ
+    //изменение оружия
     virtual public void set_weapon(int weapon_index)
     {
         Texture weapon_texture = null;
@@ -72,4 +80,10 @@ public class chars_behavior : MonoBehaviour {
         weapon_comp.material.SetTexture("weapon", weapon_texture);
         //weapon_slot.display = weapon_texture;
     }
+
+
+
+    
+
+
 }

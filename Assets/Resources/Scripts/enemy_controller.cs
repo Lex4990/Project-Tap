@@ -6,6 +6,33 @@ using UnityEngine.UI;
 using DragonBones;
 
 public class enemy_controller : chars_behavior {
+
+ ///////////////////////////////////////////////////////////////////////////////////////////////////
+   private static readonly string[] WEAPON_RIGHT_LIST = { "weapon_1004_r", "weapon_1004b_r", "weapon_1004c_r", "weapon_1004d_r", "weapon_1004e_r" };
+    private UnityArmatureComponent _armatureComp = null;
+    private Slot _leftWeaponSlot = null;
+    private Slot _rightWeaponSlot = null;
+    private int _leftWeaponIndex = -1;
+    private int _rightWeaponIndex = -1;
+   ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //Характеристики персонажа
     //public float attack_delay = 2;//время между ударами
     //public int hp = 10;//здоровье
@@ -24,12 +51,47 @@ public class enemy_controller : chars_behavior {
     private GameObject      death_particles;
     
 	// Use this for initialization
-	void                   Start () {
-        Load_DB("db_files/simple_skeleton_ske", "db_files/simple_skeleton_tex", "skeleton");
+	void Start () {
+        Load_DB("skeletonpack/simple_skeleton_ske", "skeletonpack/simple_skeleton_tex", "skeleton");
         armatureComp.animation.Play("RUN");
         //transform.position = new Vector2(spawn_x, 0f);
         armatureComp.transform.position = transform.position;
-        set_weapon(0);
+        // set_weapon(0);
+
+        // UnityFactory.factory.LoadDragonBonesData("mecha_1004d_show/mecha_1004d_show_ske");
+        // UnityFactory.factory.LoadTextureAtlasData("mecha_1004d_show/mecha_1004d_show_tex");
+
+        // Load Right Weapon Data
+        UnityFactory.factory.LoadDragonBonesData("weapon_1004_show/weapon_1004_show_ske");
+        UnityFactory.factory.LoadTextureAtlasData("weapon_1004_show/weapon_1004_show_tex");
+
+        // Build Mecha Armature
+        this._armatureComp = UnityFactory.factory.BuildArmatureComponent("skeleton");
+        
+        this._armatureComp.CloseCombineMeshs();
+
+        // this._armatureComp.animation.Play("idle");
+
+        // this._armatureComp.transform.localPosition = new Vector3(10.0f, 0.0f, 0.0f);
+
+        // ПРОВЕРКА СПИСКА СЛОТОВ НЕ УДАЛЯТЬ!!!!
+        List<Slot> list = new List<Slot>();
+        list = this._armatureComp.armature.GetSlots();
+        foreach(Slot a in list){
+        Debug.LogWarning(a.name);
+        }
+        /////////////////////////////////////////////////
+       
+       // this._leftWeaponSlot = this._armatureComp.armature.GetSlot("weapon");
+        this._rightWeaponSlot = this._armatureComp.armature.GetSlot("leg_left3");
+        Debug.LogWarning(_armatureComp.armature.GetSlot("leg_left3"));
+      
+        // Set left weapon default value
+        this._leftWeaponIndex = 0;
+        // Set right weapon default value
+        this._rightWeaponIndex = 0;
+
+
     }
 
     // Update is called once per frame
@@ -89,6 +151,23 @@ public class enemy_controller : chars_behavior {
             gcontroller.GetComponent<EnemyManager>().RemoveFromOrder(MyOrder);
             Destroy(gameObject);
         }
+
+              if (Input.GetMouseButtonDown(0))
+        {
+            // var leftSide = 0.0f + Screen.width / 2.0f - Screen.width / 6.0f;
+            // var rightSide = Screen.width / 2.0f + Screen.width / 6.0f;
+            // var isMiddle = Input.mousePosition.x < rightSide && Input.mousePosition.x > leftSide;
+            // var isTouchRight = Input.mousePosition.x > rightSide;
+            // //
+            // if (isMiddle)
+            // {
+                // this._ReplaceDisplay(0);
+            // }
+            // else
+            // {
+                this._ReplaceDisplay(-1);
+            // }
+        }
     }
     
     override public void    Get_Damage(int damage)
@@ -130,4 +209,31 @@ public class enemy_controller : chars_behavior {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere((Vector2)gameObject.transform.position + new Vector2(attack_pos_x * flip_value, attack_pos_y), attack_range);
     }
+
+private void _ReplaceDisplay(int type)
+    {
+        switch (type)
+        {
+            case 1:
+                {
+                    // Switch slot display index
+                    this._leftWeaponIndex++;
+                    this._leftWeaponIndex %= this._leftWeaponSlot.displayList.Count;
+                    this._leftWeaponSlot.displayIndex = this._leftWeaponIndex;
+                }
+                break;
+            case -1:
+                {
+                    // Replace slot display
+                    this._rightWeaponIndex++;
+                    this._rightWeaponIndex %= WEAPON_RIGHT_LIST.Length;
+                    var weaponDisplayName = WEAPON_RIGHT_LIST[this._rightWeaponIndex];
+                    //
+                    UnityFactory.factory.ReplaceSlotDisplay("weapon_1004_show", "weapon", "weapon_r", weaponDisplayName, this._rightWeaponSlot);
+                }
+                break;
+        }
+
+    }
+
 }
